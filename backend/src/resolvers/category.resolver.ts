@@ -1,0 +1,80 @@
+import { CreateCategoryInput, EditCategoryInput } from '../dtos/input/category.input.js';
+import { GqlUser } from '../graphql/decorators/user.decorator.js';
+import { IsAuth } from '../middlewares/auth.middleware.js';
+import { CategoryModel } from '../models/category.model.js';
+import { UserModel } from '../models/user.model.js';
+import { CategoryService } from '../services/category.service.js';
+import { UserService } from '../services/user.service.js';
+import {
+	Arg,
+	FieldResolver,
+	Mutation,
+	Query,
+	Resolver,
+	Root,
+	UseMiddleware,
+} from 'type-graphql';
+
+
+
+@Resolver(() => CategoryModel)
+@UseMiddleware(IsAuth)
+export class CategoryResolver {
+	private categoryService = new CategoryService();
+	private userService = new UserService();
+
+	@Mutation(() => CategoryModel)
+	async createCategory(
+		@Arg('data', () => CreateCategoryInput) data: CreateCategoryInput,
+		@GqlUser() user: UserModel,
+	): Promise<CategoryModel> {
+		return this.categoryService.createCategory(data, user.id);
+	}
+
+	@Mutation(() => CategoryModel)
+	async editCategory(
+		@Arg('data', () => EditCategoryInput) data: EditCategoryInput,
+		@GqlUser() user: UserModel,
+	): Promise<CategoryModel> {
+		return this.categoryService.editCategory(data, user.id);
+	}
+
+	@Query(() => [CategoryModel])
+	async listCategoriesByUser(
+		@GqlUser() user: UserModel,
+	): Promise<CategoryModel[]> {
+		return this.categoryService.listCategoriesByUser(user.id);
+	}
+
+	@Mutation(() => Boolean)
+	async deleteCategory(
+		@Arg('id', () => String) id: string,
+		@GqlUser() user: UserModel,
+	): Promise<boolean> {
+		return this.categoryService.deleteCategory(id, user.id);
+	}
+
+	@FieldResolver(() => UserModel)
+	async user(@Root() category: CategoryModel): Promise<UserModel> {
+		if (category.user) {
+			return category.user;
+		}
+
+		return this.userService.findUser(category.userId);
+	}
+
+	@FieldResolver(() => Number)
+	async transactionsCount(
+		@Root() category: CategoryModel,
+		@GqlUser() user: UserModel,
+	): Promise<number> {
+		if (typeof category.transactionsCount === 'number') {
+			return category.transactionsCount;
+		}
+
+		return this.categoryService.countTransactionsInCategory(
+			category.id,
+			user.id,
+		);
+	}
+}

@@ -1,0 +1,18 @@
+{
+  "name": "financy",
+  "private": true,
+  "packageManager": "npm@11.11.0",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "install": "turbo run install"
+  },
+  "devDependencies": {
+    "turbo": "^2.8.10"
+  }
+}

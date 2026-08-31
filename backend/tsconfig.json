@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"ignoreDeprecations": "6.0",
+		"rootDirs": [
+			"src"
+		],
+		"outDir": "dist",
+		"lib": [
+			"es2023",
+			"dom"
+		],
+		"target": "es2023",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+		"esModuleInterop": true,
+		"types": [
+			"node"
+		],
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	}
+}

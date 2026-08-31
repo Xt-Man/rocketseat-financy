@@ -1,0 +1,9 @@
+node_modules
+.git
+.github
+.turbo
+dist
+backend/dist
+backend/generated
+frontend/dist
+npm-debug.log*
